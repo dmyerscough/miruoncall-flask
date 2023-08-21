@@ -99,51 +99,54 @@ def test_populate_teams(mock_teams, db):
 
     assert populate_teams()
 
-#     @skip('Needs implemented')
-#     def test_populate_teams_request_failure(self):
-#         pass
+@patch('oncall.incidents.tasks.PagerDuty')
+def test_update_incident_helper_status_mismatch(mock_incident, db):
+    """
+    Test incident helper when the status does not match the status stored in the database
+    """
+    mock_incident_ = MagicMock()
+    mock_incident_.get_incident.return_value = {
+        'id': 'PT4KHLK',
+        'type': 'incident',
+        'summary': '[#1234] The server is on fire.',
+        'self': 'https://api.pagerduty.com/incidents/PT4KHLK',
+        'html_url': 'https://subdomain.pagerduty.com/incidents/PT4KHLK',
+        'incident_number': 1234,
+        'created_at': '2015-10-06T21:30:42Z',
+        'status': 'resolved',
+        'title': 'The server is on fire.',
+        'urgency': 'high'
+    }
 
-#     @patch('oncall.tasks.PagerDuty')
-#     def test_update_incident_helper_status_mismatch(self, mock_incident):
-#         """
-#         Test incident helper when the status does not match the status stored in the database
-#         """
-#         mock_incident_ = MagicMock()
-#         mock_incident_.get_incident.return_value = {
-#             'id': 'PT4KHLK',
-#             'type': 'incident',
-#             'summary': '[#1234] The server is on fire.',
-#             'self': 'https://api.pagerduty.com/incidents/PT4KHLK',
-#             'html_url': 'https://subdomain.pagerduty.com/incidents/PT4KHLK',
-#             'incident_number': 1234,
-#             'created_at': '2015-10-06T21:30:42Z',
-#             'status': 'resolved',
-#             'title': 'The server is on fire.',
-#             'urgency': 'high'
-#         }
+    mock_incident.return_value = mock_incident_
 
-#         mock_incident.return_value = mock_incident_
+    db.session.add(Teams(name='example', team_id='example-id', summary='example SRE', last_checked=datetime.now()))
+    db.session.commit()
 
-#         Incidents.objects.create(
-#             id='96e3d488-52b8-4b86-906e-8bc5b3b7504b',
-#             title='Down Replica DB',
-#             description='Down Replica DB',
-#             summary='Down Replica DB',
-#             status='triggered',
-#             created_at=timezone.now(),
-#             incident_id='PT4KHLK',
-#             urgency='high',
-#             team=Team.objects.create(
-#                 name='PANW SRE',
-#                 team_id='PANW',
-#                 summary='The Oncall Team for XYZ',
-#             )
-#         )
+    db.session.add(
+        Incidents(
+            title='Down Replica DB',
+            description='Down Replica DB',
+            summary='Down Replica DB',
+            status='triggered',
+            created_at=datetime.now(),
+            incident_id='PT4KHLK',
+            actionable=None,
+            annotation=None,
+            urgency='high',
+            team=1,
+        )
+    )
+    db.session.commit()
 
-#         self.assertTrue(_update_incident('96e3d488-52b8-4b86-906e-8bc5b3b7504b'))
-#         self.assertEqual(Incidents.objects.get(id='96e3d488-52b8-4b86-906e-8bc5b3b7504b').status, 'resolved')
+    incident = Incidents.query.filter_by(incident_id='PT4KHLK').one_or_none()
 
-#         mock_incident_.get_incident.assert_called_once_with(incident_id='PT4KHLK')
+    assert _update_incident(incident_id=incident.id)
+    db.session.commit() # commit the changes that were applied in the _update_incident function
+
+    assert Incidents.query.filter_by(id=incident.id).one().status == 'resolved'
+
+    mock_incident_.get_incident.assert_called_once_with(incident_id='PT4KHLK')
 
 #     @patch('oncall.tasks._update_incident')
 #     def test_update_incident(self, mock_update_incident):
