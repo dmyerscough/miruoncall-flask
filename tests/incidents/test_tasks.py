@@ -147,33 +147,3 @@ def test_update_incident_helper_status_mismatch(mock_incident, db):
     assert Incidents.query.filter_by(id=incident.id).one().status == 'resolved'
 
     mock_incident_.get_incident.assert_called_once_with(incident_id='PT4KHLK')
-
-#     @patch('oncall.tasks._update_incident')
-#     def test_update_incident(self, mock_update_incident):
-#         """
-#         Test updaing an incident that is not marked as resolved
-#         """
-#         current_time = timezone.now()
-
-#         with patch.object(timezone, 'now', return_value=current_time):
-#             Incidents.objects.create(
-#                 id='96e3d488-52b8-4b86-906e-8bc5b3b7504b',
-#                 title='Down Replica DB',
-#                 description='Down Replica DB',
-#                 summary='Down Replica DB',
-#                 status='triggered',
-#                 created_at=timezone.now(),
-#                 incident_id='PT4KHLK',
-#                 urgency='high',
-#                 team=Team.objects.create(
-#                     name='PANW SRE',
-#                     team_id='PANW',
-#                     summary='The Oncall Team for XYZ',
-#                 )
-#             )
-
-#             self.assertTrue(update_incidents())
-
-#         mock_update_incident.delay.assert_called_once_with(
-#             incident_id=uuid.UUID('96e3d488-52b8-4b86-906e-8bc5b3b7504b'),
-#         )

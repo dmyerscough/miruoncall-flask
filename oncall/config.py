@@ -7,7 +7,6 @@ from celery.schedules import crontab
 # from oncall.incidents import models
 
 
-
 class BaseConfig:
     """
     Base configuration
