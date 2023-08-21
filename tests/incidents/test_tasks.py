@@ -75,33 +75,29 @@ def test_populate_incident(mock_datetime, mock_pagerduty, db):
     assert incident.description == 'No description'
     assert incident.status == 'resolved'
 
-#     @skip('Needs implemented')
-#     def test_populate_alerts_request_failure(self):
-#         pass
+@patch('oncall.incidents.tasks.PagerDuty')
+def test_populate_teams(mock_teams, db):
+    """
+    Test populating teams
+    """
+    mock_team = MagicMock()
+    mock_team.get_teams.return_value = [
+        [
+            {
+                "id": "PQ9K7I8",
+                "type": "team",
+                "summary": "Engineering",
+                "self": "https://api.pagerduty.com/teams/PQ9K7I8",
+                "html_url": "https://subdomain.pagerduty.com/teams/PQ9K7I8",
+                "name": "Engineering",
+                "description": "All engineering"
+            }
+        ]
+    ]
 
-#     @patch('oncall.tasks.PagerDuty')
-#     def test_populate_teams(self, mock_teams):
-#         """
-#         Test populating teams
-#         """
-#         mock_team = MagicMock()
-#         mock_team.get_teams.return_value = [
-#             [
-#                 {
-#                     "id": "PQ9K7I8",
-#                     "type": "team",
-#                     "summary": "Engineering",
-#                     "self": "https://api.pagerduty.com/teams/PQ9K7I8",
-#                     "html_url": "https://subdomain.pagerduty.com/teams/PQ9K7I8",
-#                     "name": "Engineering",
-#                     "description": "All engineering"
-#                 }
-#             ]
-#         ]
+    mock_teams.return_value = mock_team
 
-#         mock_teams.return_value = mock_team
-
-#         self.assertTrue(populate_teams())
+    assert populate_teams()
 
 #     @skip('Needs implemented')
 #     def test_populate_teams_request_failure(self):
