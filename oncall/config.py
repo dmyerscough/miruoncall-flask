@@ -4,6 +4,8 @@ from pathlib import Path
 
 from celery.schedules import crontab
 
+# from oncall.incidents import models
+
 
 
 class BaseConfig:
@@ -48,6 +50,11 @@ class BaseConfig:
     }
 
 
+class TestingConfig(BaseConfig):
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/test.db'
+
+
 class DevelopmentConfig(BaseConfig):
     """
     Development configuration
@@ -63,6 +70,7 @@ class ProductionConfig(BaseConfig):
 
 
 config = {
+    'testing': TestingConfig,
     'development': DevelopmentConfig,
     'production': ProductionConfig,
 }

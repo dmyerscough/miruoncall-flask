@@ -18,6 +18,9 @@ class Annotations(db.Model):
     def __init__(self, annotation):
         self.annotation = annotation
 
+    def __repr__(self):
+        return f'<Annotation: {self.id}>'
+
 
 class Teams(db.Model):
 
@@ -56,7 +59,9 @@ class Incidents(db.Model):
     status = db.Column(db.String(12))
 
     actionable = db.Column(db.Boolean, nullable=True)
+
     created_at = db.Column(db.DateTime)
+    updated_at = db.Column(db.DateTime, nullable=True)
 
     incident_id = db.Column(db.String(20))
 
@@ -77,3 +82,6 @@ class Incidents(db.Model):
         self.annotation = annotation
         self.urgency = urgency
         self.team = team
+
+    def __repr__(self):
+        return f'<Incident ID: {self.incident_id} - {self.title}>'
