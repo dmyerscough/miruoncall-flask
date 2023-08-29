@@ -28,6 +28,8 @@ class Teams(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
+    alias = db.Column(db.String(30), unique=True, nullable=True)
+
     name = db.Column(db.String(255))
     team_id = db.Column(db.String(255))
 

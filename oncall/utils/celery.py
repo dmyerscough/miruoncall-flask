@@ -6,7 +6,7 @@ def make_celery(app):
     celery = current_celery_app
     celery.conf.update(app.config, namespace='CELERY')
 
-    celery.autodiscover_tasks(['oncall.incidents.tasks'])
+    celery.autodiscover_tasks(['oncall.api.tasks'])
 
     class ContextTask(celery.Task):
         def __call__(self, *args, **kwargs):

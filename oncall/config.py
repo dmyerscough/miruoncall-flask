@@ -4,8 +4,6 @@ from pathlib import Path
 
 from celery.schedules import crontab
 
-# from oncall.incidents import models
-
 
 class BaseConfig:
     """
@@ -18,7 +16,7 @@ class BaseConfig:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URI', f'sqlite:///{BASE_DIR}/oncall.db')
 
-    INITIAL_INCIDENT_LOOKBACK = os.getenv('INITIAL_INCIDENT_LOOKBACK', 7)
+    INITIAL_INCIDENT_LOOKBACK = os.getenv('INITIAL_INCIDENT_LOOKBACK', 21)
 
     # Celery configuration
     BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://127.0.0.1:6379/0')
@@ -32,17 +30,17 @@ class BaseConfig:
     # Celery beat schedule
     CELERYBEAT_SCHEDULE = {
         'populate_teams': {
-            'task': 'oncall.incidents.tasks.populate_teams',
+            'task': 'oncall.api.tasks.populate_teams',
             # Every 30 minutes
             'schedule': crontab(minute="*/30"),
         },
         'populate_incidents': {
-            'task': 'oncall.incidents.tasks.populate_incidents',
+            'task': 'oncall.api.tasks.populate_incidents',
             # Every minute
-            'schedule': crontab(minute="*"),
+            'schedule': crontab(minute="*/3"),
         },
         'update_incidents': {
-            'task': 'oncall.incidents.tasks.update_incidents',
+            'task': 'oncall.api.tasks.update_incidents',
             # Every 5 minutes
             'schedule': crontab(minute="*/5"),
         },

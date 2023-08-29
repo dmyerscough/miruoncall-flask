@@ -34,5 +34,3 @@ def create_app(config_name=None):
         return {'app': app, 'db': db}
 
     return app
-
-# from oncall.incidents import models

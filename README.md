@@ -1,5 +1,9 @@
 
+# OnCall
 
+```bash
+$ FLASK_APP=oncall/app.py flask run
+```
 
 # Celery
 

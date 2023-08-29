@@ -5,8 +5,8 @@ import os
 from datetime import datetime, timedelta
 
 from oncall import db
+from oncall.api.models import Incidents, Teams
 from oncall.app import app, celery
-from oncall.incidents.models import Incidents, Teams
 from oncall.utils.pagerduty import PagerDuty, RequestFailure
 
 logger = logging.getLogger(__name__)

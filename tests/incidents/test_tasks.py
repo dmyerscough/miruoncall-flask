@@ -6,12 +6,12 @@ import pytest
 from datetime import datetime
 from mock import MagicMock, patch
 
-from oncall.incidents.models import Incidents, Teams
-from oncall.incidents.tasks import (_populate_incident, _update_incident, populate_incidents, populate_teams, update_incidents)
+from oncall.api.models import Incidents, Teams
+from oncall.api.tasks import (_populate_incident, _update_incident, populate_incidents, populate_teams, update_incidents)
 
 
-@patch('oncall.incidents.tasks._populate_incident')
-@patch('oncall.incidents.tasks.datetime')
+@patch('oncall.api.tasks._populate_incident')
+@patch('oncall.api.tasks.datetime')
 def test_populate_incidents(mock_datetime, mock_populate_incident, db):
     """
     Test checking teams to populate incidents
@@ -31,8 +31,8 @@ def test_populate_incidents(mock_datetime, mock_populate_incident, db):
         until=current_time,
     )
 
-@patch('oncall.incidents.tasks.PagerDuty')
-@patch('oncall.incidents.tasks.datetime')
+@patch('oncall.api.tasks.PagerDuty')
+@patch('oncall.api.tasks.datetime')
 def test_populate_incident(mock_datetime, mock_pagerduty, db):
     """
     Test populating alerts
@@ -75,7 +75,7 @@ def test_populate_incident(mock_datetime, mock_pagerduty, db):
     assert incident.description == 'No description'
     assert incident.status == 'resolved'
 
-@patch('oncall.incidents.tasks.PagerDuty')
+@patch('oncall.api.tasks.PagerDuty')
 def test_populate_teams(mock_teams, db):
     """
     Test populating teams
@@ -99,7 +99,7 @@ def test_populate_teams(mock_teams, db):
 
     assert populate_teams()
 
-@patch('oncall.incidents.tasks.PagerDuty')
+@patch('oncall.api.tasks.PagerDuty')
 def test_update_incident_helper_status_mismatch(mock_incident, db):
     """
     Test incident helper when the status does not match the status stored in the database
