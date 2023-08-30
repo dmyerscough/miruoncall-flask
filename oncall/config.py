@@ -37,7 +37,7 @@ class BaseConfig:
         'populate_incidents': {
             'task': 'oncall.api.tasks.populate_incidents',
             # Every minute
-            'schedule': crontab(minute="*/3"),
+            'schedule': crontab(minute="*"),
         },
         'update_incidents': {
             'task': 'oncall.api.tasks.update_incidents',

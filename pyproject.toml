@@ -15,6 +15,7 @@ flask-migrate = "^4.0.4"
 requests = "^2.31.0"
 flask-celeryext = "^0.5.0"
 flower = "^2.0.1"
+flask-restx = "^1.1.0"
 
 
 [tool.poetry.group.dev.dependencies]

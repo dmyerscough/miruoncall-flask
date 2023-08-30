@@ -26,7 +26,7 @@ def populate_incidents(self):
 
 
 @celery.task(bind=True, autoretry_for=(Exception,), exponential_backoff=2, retry_kwargs={'max_retries': 3}, retry_jitter=False)
-def _populate_incident(self, team_id: str, since: str, until: str):
+def _populate_incident(self, team_id: str, since: datetime, until: datetime):
     """
     Populate team alerts
 
@@ -38,7 +38,10 @@ def _populate_incident(self, team_id: str, since: str, until: str):
     """
     pyduty = PagerDuty(os.getenv('PAGERDUTY_KEY'))
 
-    team = Teams.query.filter_by(id=team_id).one()
+    team = Teams.query.filter_by(id=team_id).one_or_none()
+
+    if team is None:
+        return
 
     try:
         for incidents in pyduty.get_incidents(team_id=team.team_id, since=since, until=until):
