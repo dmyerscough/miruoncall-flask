@@ -1,8 +1,9 @@
-from sqlalchemy import and_
+from datetime import datetime
+from http import HTTPStatus
+
 from flask import Blueprint, jsonify, request
 
-from oncall.api.models import Teams, Incidents
-
+from oncall.api.models import Incidents, Teams
 
 api = Blueprint('api', __name__, url_prefix='/api')
 
@@ -28,8 +29,19 @@ def get_incidents(team_id):
     # Check the team exists
     Teams.query.get_or_404(team_id)
 
-    since = '2023-08-20'
-    until = '2023-08-29'
+    data = request.get_json()
+
+    since = data.get('since')
+    until = data.get('until')
+
+    if since is None or until is None:
+        return jsonify({"error": "since and until are required arguments"}), HTTPStatus.BAD_REQUEST
+
+    try:
+        since = datetime.fromisoformat(since).strftime('%Y-%m-%d')
+        since = datetime.fromisoformat(until).strftime('%Y-%m-%d')
+    except ValueError:
+        return jsonify({"error": "since and until require the format of YYYY-MM-DD"}), HTTPStatus.BAD_REQUEST
 
     incidents = {'incidents': [], 'summary': {}}
 
