@@ -39,9 +39,12 @@ def get_incidents(team_id):
 
     try:
         since = datetime.fromisoformat(since).strftime('%Y-%m-%d')
-        since = datetime.fromisoformat(until).strftime('%Y-%m-%d')
+        until = datetime.fromisoformat(until).strftime('%Y-%m-%d')
     except ValueError:
-        return jsonify({"error": "since and until require the format of YYYY-MM-DD"}), HTTPStatus.BAD_REQUEST
+        return jsonify({'error': 'since and until require the format of YYYY-MM-DD'}), HTTPStatus.BAD_REQUEST
+
+    if datetime.fromisoformat(since) > datetime.fromisoformat(until):
+        return jsonify({'error': 'since cannot be greater than until'}), HTTPStatus.BAD_REQUEST
 
     incidents = {'incidents': [], 'summary': {}}
 
