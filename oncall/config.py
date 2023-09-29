@@ -16,7 +16,7 @@ class BaseConfig:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URI', f'sqlite:///{BASE_DIR}/oncall.db')
 
-    INITIAL_INCIDENT_LOOKBACK = os.getenv('INITIAL_INCIDENT_LOOKBACK', 21)
+    INITIAL_INCIDENT_LOOKBACK = os.getenv('INITIAL_INCIDENT_LOOKBACK', 90)
 
     # Celery configuration
     BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://127.0.0.1:6379/0')
@@ -58,12 +58,19 @@ class DevelopmentConfig(BaseConfig):
     """
     DEBUG = True
 
+    CORS_ORIGINS = [
+        'http://127.0.0.1:3000',
+        'http://127.0.0.1:5000',
+    ]
+
 
 class ProductionConfig(BaseConfig):
     """
     Production configuration
     """
     DEBUG = False
+
+    CORS_ORIGINS = []
 
 
 config = {

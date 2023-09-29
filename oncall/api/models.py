@@ -21,6 +21,9 @@ class Annotations(db.Model):
     def __repr__(self):
         return f'<Annotation: {self.id}>'
 
+    def to_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 class Teams(db.Model):
 
@@ -67,7 +70,7 @@ class Incidents(db.Model):
 
     incident_id = db.Column(db.String(20))
 
-    annotation = db.Column(db.Integer, db.ForeignKey('annotations.id'), nullable=True)
+    annotation = db.Column(db.Integer, db.ForeignKey('annotations.id', ondelete='SET NULL'), nullable=True)
 
     urgency = db.Column(db.String(15))
 

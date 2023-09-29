@@ -379,6 +379,20 @@ Flask = ">=2.2.0"
 tests = ["Sphinx (>=4.2.0)", "check-manifest (>=0.42)", "coverage (>=5.3,<6)", "docker-services-cli (>=0.4.0)", "importlib-metadata (<5)", "msgpack-python (>=0.5.6)", "pytest (>=6,<7.2.0)", "pytest-black (>=0.3.12)", "pytest-cov (>=3.0.0)", "pytest-flask (>=1.2.0)", "pytest-isort (>=3.0.0)", "pytest-mock (>=2.0.0)", "pytest-pydocstyle (>=2.2.0)", "redis (>=4.1.4)"]
 
 [[package]]
+name = "flask-cors"
+version = "4.0.0"
+description = "A Flask extension adding a decorator for CORS support"
+optional = false
+python-versions = "*"
+files = [
+    {file = "Flask-Cors-4.0.0.tar.gz", hash = "sha256:f268522fcb2f73e2ecdde1ef45e2fd5c71cc48fe03cffb4b441c6d1b40684eb0"},
+    {file = "Flask_Cors-4.0.0-py2.py3-none-any.whl", hash = "sha256:bc3492bfd6368d27cfe79c7821df5a8a319e1a6d5eab277a3794be19bdc51783"},
+]
+
+[package.dependencies]
+Flask = ">=0.9"
+
+[[package]]
 name = "flask-migrate"
 version = "4.0.4"
 description = "SQLAlchemy database migrations for Flask applications using Alembic."
@@ -1247,4 +1261,4 @@ watchdog = ["watchdog (>=2.3)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "85f4e403a30ce57c4ff390a6339513bc80dab0c013d693d05f90e38b2a16f4b7"
+content-hash = "8e56b15145a3eb905050f80f816e499390b7d19b20f910d0eabdee85c5d3a634"

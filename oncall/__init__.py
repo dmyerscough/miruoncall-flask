@@ -6,6 +6,8 @@ from flask_celeryext import FlaskCeleryExt
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
+from flask_cors import CORS
+
 from oncall.config import config
 from oncall.utils.celery import make_celery
 
@@ -22,6 +24,7 @@ def create_app(config_name=None):
         config_name = os.getenv('FLASK_CONFIG', 'development')
 
     app = Flask(__name__)
+    CORS(app, resources={r"/api/*": {"origins": config[config_name].CORS_ORIGINS}})
 
     app.config.from_object(config[config_name])
 
