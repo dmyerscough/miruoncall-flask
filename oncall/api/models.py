@@ -92,7 +92,7 @@ class Incidents(db.Model):
         self.team = team
 
     def to_dict(self):
-        return {**{c.name: getattr(self, c.name) for c in self.__table__.columns}, **{'annotation': self.annotation.to_dict()}}
+        return {**{c.name: getattr(self, c.name) for c in self.__table__.columns}, **{'annotation': self.annotation.to_dict() if self.annotation else None}}
 
     def __repr__(self):
         return f'<Incident ID: {self.incident_id} - {self.title}>'
