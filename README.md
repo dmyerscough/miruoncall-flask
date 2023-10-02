@@ -41,17 +41,17 @@ $ curl -s -XGET http://127.0.0.1:5000/api/v1/teams
 # Create annotation
 
 ```bash
-$ curl -s -XPOST -H 'Content-type: application/json' --data '{"annotation": "Test annotation"}' http://127.0.0.1:5000/api/v1/incident/1/annotate
+$ curl -s -XPOST -H 'Content-type: application/json' --data '{"annotation": "Test annotation"}' http://127.0.0.1:5000/api/v1/incident/Q2U9JA89EK0C17_PPXN2GC/annotation
 ```
 
 # Update annotation
 
 ```bash
-$ curl -s -XPUT -H 'Content-type: application/json' --data '{"annotation": "Test annotation 2"}' http://127.0.0.1:5000/api/v1/incident/1/annotate
+$ curl -s -XPUT -H 'Content-type: application/json' --data '{"annotation": "Test annotation 2"}' http://127.0.0.1:5000/api/v1/incident/Q2U9JA89EK0C17_PPXN2GC/annotation
 ```
 
 # Delete annotation
 
 ```bash
-$ curl -s -XDELETE -H 'Content-type: application/json' http://127.0.0.1:5000/api/v1/incident/2/annotate
+$ curl -s -XDELETE -H 'Content-type: application/json' http://127.0.0.1:5000/api/v1/incident/2/annotation
 ```

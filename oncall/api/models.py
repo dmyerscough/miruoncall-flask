@@ -10,13 +10,15 @@ class Annotations(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    annotation = db.Column(db.String(255))
+    summary = db.Column(db.String(255))
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+    incidents = db.relationship('Incidents', back_populates='annotation')
 
     # created_by = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __init__(self, annotation):
-        self.annotation = annotation
+        self.summary = annotation
 
     def __repr__(self):
         return f'<Annotation: {self.id}>'
@@ -68,13 +70,14 @@ class Incidents(db.Model):
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime, nullable=True)
 
-    incident_id = db.Column(db.String(20))
-
-    annotation = db.Column(db.Integer, db.ForeignKey('annotations.id', ondelete='SET NULL'), nullable=True)
+    incident_id = db.Column(db.String(50))
 
     urgency = db.Column(db.String(15))
 
     team = db.Column(db.Integer, db.ForeignKey('teams.id'))
+
+    annotation_id = db.Column(db.Integer, db.ForeignKey('annotations.id'))
+    annotation = db.relationship('Annotations', back_populates='incidents')
 
     def __init__(self, title, description, summary, status, actionable, created_at, incident_id, annotation, urgency, team):
         self.title = title

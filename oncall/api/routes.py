@@ -4,7 +4,7 @@ from http import HTTPStatus
 from flask import Blueprint, jsonify, request
 
 from oncall import db
-from oncall.api.models import Incidents, Teams, Annotations
+from oncall.api.models import Annotations, Incidents, Teams
 
 api = Blueprint('api', __name__, url_prefix='/api/v1')
 
@@ -61,37 +61,38 @@ def get_incidents(team_id):
     return jsonify(incidents)
 
 
-@api.route('/incident/<string:incident_id>/annotate', methods=['POST', 'PUT', 'DELETE'])
-def annotate(incident_id):
+@api.route('/incident/<string:incident_id>/annotation', methods=['POST', 'PUT', 'DELETE'])
+def annotation(incident_id):
     """
-
+    Annotation for an incident
     """
     if not request.is_json:
         return jsonify({"error": "requests must of type application/json"})
 
     # Check the team exists
-    incident = Incidents.query.filter_by(id=incident_id).one_or_none()
+    incident = Incidents.query.filter_by(incident_id=incident_id).one_or_none()
 
-    # if request.method != 'DELETE':
+    if incident is None:
+        return jsonify({"error": "incident does not exist"}), HTTPStatus.BAD_REQUEST
+
     data = request.get_json()
 
     description = data.get('annotation')
 
-    if incident and incident.annotation is not None:
-        annotation = Annotations.query.filter_by(id=incident.annotation).one_or_none()
+    if incident and incident.annotation_id is not None:
+        annotation = Annotations.query.filter_by(id=incident.annotation_id).one_or_none()
 
         if request.method == 'PUT':
-            db.session.query(Annotations).filter_by(id=incident.annotation).update({'annotation': description})
+            db.session.query(Annotations).filter_by(id=incident.annotation_id).update({'summary': description})
             db.session.commit()
         elif request.method == 'DELETE':
             db.session.delete(annotation)
             db.session.commit()
     else:
-            annotation = Annotations(annotation=description, incident=incident_id)
-            db.session.add(annotation)
-            db.session.flush()
+        annotation = Annotations(annotation=description)
+        annotation.incidents.append(incident)
 
-            db.session.query(Incidents).filter_by(id=incident_id).update({'annotation': annotation.id})
-            db.session.commit()
+        db.session.add(annotation)
+        db.session.commit()
 
     return jsonify({'annotation': annotation.to_dict()}), HTTPStatus.OK

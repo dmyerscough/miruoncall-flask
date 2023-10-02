@@ -58,7 +58,7 @@ class PagerDuty:
         return resp.json()
 
     @staticmethod
-    def _check_date(since, until):
+    def _check_date(since: datetime, until: datetime):
         """
         Basic datetime validation
 
@@ -75,7 +75,7 @@ class PagerDuty:
         if since > current_time or until > current_time:
             raise InvalidTimeRange("Since and/or until cannot be set to a future time")
 
-    def get_incidents(self, team_id, since, until, offset=25):
+    def get_incidents(self, team_id: str, since: datetime, until: datetime, offset=25):
         """
         Query all the incidents for a specific team
 

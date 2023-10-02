@@ -3,10 +3,9 @@ import os
 
 from flask import Flask
 from flask_celeryext import FlaskCeleryExt
+from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-
-from flask_cors import CORS
 
 from oncall.config import config
 from oncall.utils.celery import make_celery

@@ -20,6 +20,7 @@ def populate_incidents(self):
     until = datetime.now()
 
     for team in Teams.query.all():
+        # TODO(damian): Update the last checked time
         _populate_incident.delay(team_id=team.id, since=team.last_checked, until=until)
 
     return True
@@ -46,7 +47,10 @@ def _populate_incident(self, team_id: str, since: datetime, until: datetime):
     try:
         for incidents in pyduty.get_incidents(team_id=team.team_id, since=since, until=until):
             for incident in incidents:
-                if Incidents.query.filter_by(incident_id=incident['id']).one_or_none() is None:
+                # Create a unique identifier since incident ID can be duplicated across teams
+                incident_id = f"{incident['id']}_{team.team_id}"
+
+                if Incidents.query.filter_by(incident_id=incident_id).one_or_none() is None:
                     new_incident = Incidents(
                         title=incident.get('title', 'No title'),
                         description=incident.get('description', 'No description'),
@@ -54,7 +58,7 @@ def _populate_incident(self, team_id: str, since: datetime, until: datetime):
                         status=incident.get('status', 'No status'),
                         actionable=None,
                         created_at=datetime.fromisoformat(incident['created_at']),
-                        incident_id=incident['id'],
+                        incident_id=incident_id,
                         annotation=None,
                         urgency=incident['urgency'],
                         team=team.id,
@@ -63,11 +67,15 @@ def _populate_incident(self, team_id: str, since: datetime, until: datetime):
                     db.session.add(new_incident)
                     db.session.commit()
 
-                    logger.info(f"{incident['id']} has been created")
+                    logger.info(f"{incident_id} has been created")
     except RequestFailure as err:
         logger.error(f'Failed to query PagerDuty: {err}')
 
         return False
+
+    # Update the last checked time
+    db.session.query(Teams).filter_by(id=team_id).update({'last_checked': until})
+    db.session.commit()
 
     return True
 
