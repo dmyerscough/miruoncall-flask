@@ -24,7 +24,11 @@ class Annotations(db.Model):
         return f'<Annotation: {self.id}>'
 
     def to_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        return {
+            'id': self.id,
+            'summary': self.summary,
+            'created_at': self.created_at,
+        }
 
 
 class Teams(db.Model):
@@ -92,7 +96,19 @@ class Incidents(db.Model):
         self.team = team
 
     def to_dict(self):
-        return {**{c.name: getattr(self, c.name) for c in self.__table__.columns}, **{'annotation': self.annotation.to_dict() if self.annotation else None}}
+        return {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description,
+            'summary': self.summary,
+            'status': self.status,
+            'actionable': self.actionable,
+            'created_at': self.created_at,
+            'incident_id': self.incident_id.split('_')[0],
+            'urgency': self.urgency,
+            'team': self.team,
+            'annotation': self.annotation.to_dict() if self.annotation_id else None,
+        }
 
     def __repr__(self):
         return f'<Incident ID: {self.incident_id} - {self.title}>'
