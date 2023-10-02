@@ -29,7 +29,7 @@ $ FLASK_APP=oncall/app.py flask db upgrade
 # Querying incidents
 
 ```bash
-$ curl -s -XGET -H 'Content-type: application/json' --data '{"since": "2023-08-20", "until": "2023-08-31"}' http://127.0.0.1:5000/api/v1/incidents/223
+$ curl -s -XPOST -H 'Content-type: application/json' --data '{"since": "2023-08-20", "until": "2023-08-31"}' http://127.0.0.1:5000/api/v1/incidents/223
 ```
 
 # Querying teams
