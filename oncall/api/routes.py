@@ -66,18 +66,18 @@ def annotation(incident_id):
     """
     Annotation for an incident
     """
-    if not request.is_json:
+    if not request.is_json and request.method != 'DELETE':
         return jsonify({"error": "requests must of type application/json"})
 
     # Check the team exists
-    incident = Incidents.query.filter_by(incident_id=incident_id).one_or_none()
+    incident = Incidents.query.filter_by(id=incident_id).one_or_none()
 
     if incident is None:
         return jsonify({"error": "incident does not exist"}), HTTPStatus.BAD_REQUEST
 
-    data = request.get_json()
-
-    description = data.get('annotation')
+    if request.method != 'DELETE':
+        data = request.get_json()
+        description = data.get('annotation')
 
     if incident and incident.annotation_id is not None:
         annotation = Annotations.query.filter_by(id=incident.annotation_id).one_or_none()
@@ -88,6 +88,8 @@ def annotation(incident_id):
         elif request.method == 'DELETE':
             db.session.delete(annotation)
             db.session.commit()
+
+            return jsonify({'annotation': None}), HTTPStatus.OK
     else:
         annotation = Annotations(annotation=description)
         annotation.incidents.append(incident)

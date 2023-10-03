@@ -25,7 +25,6 @@ class Annotations(db.Model):
 
     def to_dict(self):
         return {
-            'id': self.id,
             'summary': self.summary,
             'created_at': self.created_at,
         }
