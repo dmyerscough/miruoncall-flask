@@ -55,3 +55,21 @@ def test_query_incidents_none_existant_team(app, db):
     resp = client.post('/api/v1/incidents/123', content_type='application/json')
 
     assert resp.status_code == 404
+    assert resp.json == {'error': 'team does not exist'}
+
+
+def test_query_incidents_invalid_since_until(app, db):
+    """
+
+    """
+    client = app.test_client()
+
+    db.session.add(
+        Teams(name='test-team', team_id='ABC123', summary='', last_checked=datetime.now())
+    )
+    db.session.commit()
+
+    resp = client.post('/api/v1/incidents/ABC123', content_type='application/json', json={'since': '01-01-2023', 'until': '07-01-2023'})
+
+    assert resp.status_code == 400
+    assert resp.json == {'error': 'since and until require the format of YYYY-MM-DD'}
