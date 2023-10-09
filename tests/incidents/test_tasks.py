@@ -63,13 +63,13 @@ def test_populate_incident(mock_datetime, mock_pagerduty, db):
     db.session.add(Teams(name='example', team_id='example-id', summary='example SRE', last_checked=current_time))
     db.session.commit()
 
-    assert _populate_incident(team_id=1, since=current_time.isoformat(), until=current_time.isoformat())
+    assert _populate_incident(team_id=1, since=current_time, until=current_time)
 
-    incident = Incidents.query.filter_by(incident_id='PT4KHLK').one_or_none()
+    incident = Incidents.query.filter_by(incident_id='PT4KHLK_example-id').one_or_none()
 
     assert incident is not None
 
-    assert incident.incident_id == 'PT4KHLK'
+    assert incident.incident_id == 'PT4KHLK_example-id'
     assert incident.title == 'The server is on fire.'
     assert incident.summary == '[#1234] The server is on fire.'
     assert incident.description == 'No description'

@@ -53,5 +53,5 @@ $ curl -s -XPUT -H 'Content-type: application/json' --data '{"annotation": "Test
 # Delete annotation
 
 ```bash
-$ curl -s -XDELETE -H 'Content-type: application/json' http://127.0.0.1:5000/api/v1/incident/2/annotation
+$ curl -s -XDELETE -H 'Content-type: application/json' http://127.0.0.1:5000/api/v1/incident/1/annotation
 ```

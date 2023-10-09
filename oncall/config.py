@@ -46,6 +46,8 @@ class BaseConfig:
         },
     }
 
+    CORS_ORIGINS = []
+
 
 class TestingConfig(BaseConfig):
     TESTING = True
