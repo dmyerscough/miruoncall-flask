@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from http import HTTPStatus
 
 from flask import Blueprint, jsonify, request
+from werkzeug.exceptions import BadRequest
 
 from oncall import db
 from oncall.api.models import Annotations, Incidents, Teams
@@ -25,12 +26,18 @@ def get_incidents(team_id):
     Get incidents for a specific team
     """
     if not request.is_json:
-        return jsonify({"error": "requests must of type application/json"})
+        return jsonify({"error": "requests must of type application/json"}), HTTPStatus.BAD_REQUEST
 
     # Check the team exists
-    Teams.query.get_or_404(team_id)
+    team = Teams.query.filter_by(team_id=team_id).one_or_none()
 
-    data = request.get_json()
+    if team is None:
+        return jsonify({"error": "team does not exist"}), HTTPStatus.NOT_FOUND
+
+    try:
+        data = request.get_json()
+    except BadRequest:
+        return jsonify({"error": "invalid json receieved"}), HTTPStatus.BAD_REQUEST
 
     since = data.get('since')
     until = data.get('until')

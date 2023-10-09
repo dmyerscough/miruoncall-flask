@@ -2,10 +2,13 @@ import pytest
 
 from oncall import create_app, db as _db
 
+from oncall.api.routes import api
+
 
 @pytest.fixture
 def app():
     app = create_app('testing')
+    app.register_blueprint(api)
     return app
 
 

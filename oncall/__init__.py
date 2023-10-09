@@ -27,6 +27,8 @@ def create_app(config_name=None):
 
     app.config.from_object(config[config_name])
 
+    # app.register_blueprint(api)
+
     db.init_app(app)
     migrate.init_app(app, db)
     celery.init_app(app)
