@@ -60,7 +60,7 @@ def test_query_incidents_none_existant_team(app, db):
 
 def test_query_incidents_invalid_since_until(app, db):
     """
-
+    Test query incidents endpoint with invalid since and until
     """
     client = app.test_client()
 
@@ -73,3 +73,25 @@ def test_query_incidents_invalid_since_until(app, db):
 
     assert resp.status_code == 400
     assert resp.json == {'error': 'since and until require the format of YYYY-MM-DD'}
+
+    resp = client.post('/api/v1/incidents/ABC123', content_type='application/json', json={'since': '2023-28-01', 'until': '2023-30-01'})
+
+    assert resp.status_code == 400
+    assert resp.json == {'error': 'since and until require the format of YYYY-MM-DD'}
+
+
+def test_query_incidents_since_greater_than_until(app, db):
+    """
+    Test query incidents endpoint with since greater than until
+    """
+    client = app.test_client()
+
+    db.session.add(
+        Teams(name='test-team', team_id='ABC123', summary='', last_checked=datetime.now())
+    )
+    db.session.commit()
+
+    resp = client.post('/api/v1/incidents/ABC123', content_type='application/json', json={'since': '2023-01-07', 'until': '2023-01-01'})
+
+    assert resp.status_code == 400
+    assert resp.json == {'error': 'since cannot be greater than until'}
