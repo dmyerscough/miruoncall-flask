@@ -1,5 +1,8 @@
 
 from oncall.api.models import Teams
+
+from http import HTTPStatus
+
 from datetime import datetime
 
 
@@ -16,7 +19,7 @@ def test_querying_teams(app, db):
 
     resp = client.get('/api/v1/teams')
 
-    assert resp.status_code == 200
+    assert resp.status_code == HTTPStatus.OK
     assert resp.json == {'teams': [{'alias': None, 'id': 1, 'name': 'test-team'}]}
 
 
@@ -28,5 +31,5 @@ def test_querying_teams_none_exist(app, db):
 
     resp = client.get('/api/v1/teams')
 
-    assert resp.status_code == 200
+    assert resp.status_code == HTTPStatus.OK
     assert resp.json == {'teams': []}

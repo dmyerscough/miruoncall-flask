@@ -3,6 +3,9 @@ import pytest
 from oncall import create_app, db as _db
 
 from oncall.api.routes import api
+from oncall.api.models import Teams, Incidents
+
+from datetime import datetime
 
 
 @pytest.fixture

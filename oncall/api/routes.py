@@ -74,7 +74,7 @@ def annotation(incident_id):
     Annotation for an incident
     """
     if not request.is_json and request.method != 'DELETE':
-        return jsonify({"error": "requests must of type application/json"})
+        return jsonify({"error": "requests must of type application/json"}), HTTPStatus.BAD_REQUEST
 
     # Check the team exists
     incident = Incidents.query.filter_by(id=incident_id).one_or_none()
