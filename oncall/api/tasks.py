@@ -2,7 +2,7 @@
 
 import logging
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from oncall import db
 from oncall.api.models import Incidents, Teams
@@ -17,11 +17,11 @@ def populate_incidents(self):
     """
     Trigger a celery job for each team to populate alerts
     """
-    until = datetime.now()
+    until = datetime.now(timezone.utc)
 
     for team in Teams.query.all():
         # TODO(damian): Update the last checked time
-        _populate_incident.delay(team_id=team.id, since=team.last_checked, until=until)
+        _populate_incident.delay(team_id=team.id, since=datetime(team.last_checked, tzinfo=timezone.utc), until=until)
 
     return True
 
