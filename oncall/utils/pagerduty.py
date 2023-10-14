@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+from http import HTTPStatus
 from urllib.parse import urljoin
 
 from requests import Request, Session
+from retry import retry
 
 
 class RequestFailure(Exception):
@@ -11,6 +13,10 @@ class RequestFailure(Exception):
 
 
 class InvalidTimeRange(Exception):
+    pass
+
+
+class RateLimit(Exception):
     pass
 
 
@@ -22,6 +28,7 @@ class PagerDuty:
 
         self.api = api
 
+    @retry(exceptions=RateLimit, tries=3, delay=30, backoff=2)
     def _query(self, method, endpoint, payload=None, timeout=5):
         """
         Make HTTPS request to PagerDuty
@@ -50,9 +57,14 @@ class PagerDuty:
         prep = session.prepare_request(request)
         resp = session.send(prep, timeout=timeout)
 
-        if resp.status_code != 200:
+        if resp.status_code != HTTPStatus.OK:
+            if resp.status_code == HTTPStatus.TOO_MANY_REQUESTS:
+                raise RateLimit(
+                    f'{urljoin(self.PAGERDUTY_ENDPOINT, endpoint)} is being rate limited'
+                )
+
             raise RequestFailure(
-                f'/{endpoint} returned a status code: {resp.status_code} ({resp.json().get("error", {}).get("message")})'
+                f'{urljoin(self.PAGERDUTY_ENDPOINT, endpoint)} returned a status code: {resp.status_code} ({resp.json().get("error", {}).get("message")})'
             )
 
         return resp.json()
@@ -70,7 +82,7 @@ class PagerDuty:
         if since > until:
             raise InvalidTimeRange("Since time cannot be newer than until time")
 
-        current_time = datetime.datetime.now()
+        current_time = datetime.datetime.now(datetime.timezone.utc)
 
         if since > current_time or until > current_time:
             raise InvalidTimeRange("Since and/or until cannot be set to a future time")

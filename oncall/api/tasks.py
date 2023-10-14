@@ -138,7 +138,7 @@ def _update_incident(self, incident_id):
         logger.error(f'Failed to find incident {incident_id}')
         return False
 
-    resp = pyduty.get_incident(incident_id=incident.incident_id)
+    resp = pyduty.get_incident(incident_id=incident.incident_id.split('_')[0])
 
     if resp['status'] != incident.status:
         logger.info(f'Updated incident {incident.incident_id} with the new status of {resp["status"]}')
