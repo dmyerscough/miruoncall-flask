@@ -3,7 +3,7 @@
 import uuid
 import pytest
 
-from datetime import datetime
+from datetime import datetime, timezone
 from mock import MagicMock, patch
 
 from oncall.api.models import Incidents, Teams
@@ -16,7 +16,7 @@ def test_populate_incidents(mock_datetime, mock_populate_incident, db):
     """
     Test checking teams to populate incidents
     """
-    current_time = datetime.now()
+    current_time = datetime.now(timezone.utc)
 
     mock_datetime.now.return_value = current_time
 

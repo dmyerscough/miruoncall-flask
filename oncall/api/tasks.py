@@ -21,7 +21,7 @@ def populate_incidents(self):
 
     for team in Teams.query.all():
         # TODO(damian): Update the last checked time
-        _populate_incident.delay(team_id=team.id, since=datetime(team.last_checked, tzinfo=timezone.utc), until=until)
+        _populate_incident.delay(team_id=team.id, since=team.last_checked.replace(tzinfo=timezone.utc), until=until)
 
     return True
 
