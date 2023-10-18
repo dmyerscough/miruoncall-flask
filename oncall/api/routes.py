@@ -29,7 +29,7 @@ def get_incidents(team_id):
         return jsonify({"error": "requests must of type application/json"}), HTTPStatus.BAD_REQUEST
 
     # Check the team exists
-    team = Teams.query.filter_by(team_id=team_id).one_or_none()
+    team = Teams.query.filter_by(id=team_id).one_or_none()
 
     if team is None:
         return jsonify({"error": "team does not exist"}), HTTPStatus.NOT_FOUND

@@ -12,12 +12,12 @@ def test_query_incidents(app, db):
     """
     client = app.test_client()
 
-    db.session.add(
-        Teams(name='test-team', team_id='ABC123', summary='', last_checked=datetime.now())
-    )
+    team = Teams(name='test-team', team_id='ABC123', summary='', last_checked=datetime.now())
+
+    db.session.add(team)
     db.session.commit()
 
-    resp = client.post('/api/v1/incidents/ABC123', content_type='application/json', json={'since': '2023-01-01', 'until': '2023-01-07'})
+    resp = client.post(f'/api/v1/incidents/{team.id}', content_type='application/json', json={'since': '2023-01-01', 'until': '2023-01-07'})
 
     assert resp.status_code == HTTPStatus.OK
     assert resp.json == {
@@ -64,17 +64,17 @@ def test_query_incidents_invalid_since_until(app, db):
     """
     client = app.test_client()
 
-    db.session.add(
-        Teams(name='test-team', team_id='ABC123', summary='', last_checked=datetime.now())
-    )
+    team = Teams(name='test-team', team_id='ABC123', summary='', last_checked=datetime.now())
+
+    db.session.add(team)
     db.session.commit()
 
-    resp = client.post('/api/v1/incidents/ABC123', content_type='application/json', json={'since': '01-01-2023', 'until': '07-01-2023'})
+    resp = client.post(f'/api/v1/incidents/{team.id}', content_type='application/json', json={'since': '01-01-2023', 'until': '07-01-2023'})
 
     assert resp.status_code == 400
     assert resp.json == {'error': 'since and until require the format of YYYY-MM-DD'}
 
-    resp = client.post('/api/v1/incidents/ABC123', content_type='application/json', json={'since': '2023-28-01', 'until': '2023-30-01'})
+    resp = client.post(f'/api/v1/incidents/{team.id}', content_type='application/json', json={'since': '2023-28-01', 'until': '2023-30-01'})
 
     assert resp.status_code == 400
     assert resp.json == {'error': 'since and until require the format of YYYY-MM-DD'}
@@ -86,12 +86,12 @@ def test_query_incidents_since_greater_than_until(app, db):
     """
     client = app.test_client()
 
-    db.session.add(
-        Teams(name='test-team', team_id='ABC123', summary='', last_checked=datetime.now())
-    )
+    team = Teams(name='test-team', team_id='ABC123', summary='', last_checked=datetime.now())
+
+    db.session.add(team)
     db.session.commit()
 
-    resp = client.post('/api/v1/incidents/ABC123', content_type='application/json', json={'since': '2023-01-07', 'until': '2023-01-01'})
+    resp = client.post(f'/api/v1/incidents/{team.id}', content_type='application/json', json={'since': '2023-01-07', 'until': '2023-01-01'})
 
     assert resp.status_code == 400
     assert resp.json == {'error': 'since cannot be greater than until'}
