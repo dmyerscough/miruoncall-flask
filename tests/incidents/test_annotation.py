@@ -11,9 +11,6 @@ def create_team_and_incident(db):
     """
     team = Teams(name='test-team', team_id='ABC123', summary='', last_checked=datetime.now())
 
-    db.session.add(team)
-    db.session.commit()
-
     incident = Incidents(
         incident_id='123',
         team=team.id,
@@ -27,21 +24,20 @@ def create_team_and_incident(db):
         annotation=None
     )
 
+    db.session.add(team)
     db.session.add(incident)
     db.session.commit()
-
-    return (team, incident)
 
 
 def test_annotation_incident(app, db):
     """
     Test that an annotation can be added to an incident
     """
-    team, incident = create_team_and_incident(db)
+    assert create_team_and_incident(db) is None
 
     client = app.test_client()
 
-    resp = client.post(f'/api/v1/incident/{team.id}/{incident.id}/annotation', json={'annotation': 'test'})
+    resp = client.post('/api/v1/incident/1/annotation', json={'annotation': 'test'})
 
     assert resp.status_code == HTTPStatus.OK
     assert resp.json['annotation']['summary'] == 'test'
@@ -51,11 +47,11 @@ def test_annotation_none_existant_incident(app, db):
     """
     Test that an annotation cannot be added to an incident that does not exist
     """
-    team, _ = create_team_and_incident(db)
+    assert create_team_and_incident(db) is None
 
     client = app.test_client()
 
-    resp = client.post(f'/api/v1/incident/{team.id}/100/annotation', json={'annotation': 'test'})
+    resp = client.post('/api/v1/incident/2/annotation', json={'annotation': 'test'})
 
     assert resp.status_code == HTTPStatus.BAD_REQUEST
     assert resp.json['error'] == 'incident does not exist'
@@ -65,11 +61,11 @@ def test_annotation_incident_no_json(app, db):
     """
     Test that an annotation cannot be added to an incident without json
     """
-    team, incident = create_team_and_incident(db)
+    assert create_team_and_incident(db) is None
 
     client = app.test_client()
 
-    resp = client.post(f'/api/v1/incident/{team.id}/{incident.id}/annotation')
+    resp = client.post('/api/v1/incident/1/annotation')
 
     assert resp.status_code == HTTPStatus.BAD_REQUEST
     assert resp.json == {'error': 'requests must of type application/json'}
@@ -79,16 +75,16 @@ def test_update_annotation(app, db):
     """
     Test that an annotation can be updated
     """
-    team, incident = create_team_and_incident(db)
+    assert create_team_and_incident(db) is None
 
     client = app.test_client()
 
-    resp = client.post(f'/api/v1/incident/{team.id}/{incident.id}/annotation', json={'annotation': 'test'})
+    resp = client.post('/api/v1/incident/1/annotation', json={'annotation': 'test'})
 
     assert resp.status_code == HTTPStatus.OK
     assert resp.json['annotation']['summary'] == 'test'
 
-    resp = client.put(f'/api/v1/incident/{team.id}/{incident.id}/annotation', json={'annotation': 'test 2'})
+    resp = client.put('/api/v1/incident/1/annotation', json={'annotation': 'test 2'})
 
     assert resp.status_code == HTTPStatus.OK
     assert resp.json['annotation']['summary'] == 'test 2'
@@ -98,16 +94,16 @@ def test_deleting_annotation(app, db):
     """
     Test that an annotation can be deleted
     """
-    team, incident = create_team_and_incident(db)
+    assert create_team_and_incident(db) is None
 
     client = app.test_client()
 
-    resp = client.post(f'/api/v1/incident/{team.id}/{incident.id}/annotation', json={'annotation': 'test'})
+    resp = client.post('/api/v1/incident/1/annotation', json={'annotation': 'test'})
 
     assert resp.status_code == HTTPStatus.OK
     assert resp.json['annotation']['summary'] == 'test'
 
-    resp = client.delete(f'/api/v1/incident/{team.id}/{incident.id}/annotation')
+    resp = client.delete('/api/v1/incident/1/annotation')
 
     assert resp.status_code == HTTPStatus.OK
     assert resp.json == {"annotation": None}

@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import uuid
+import pytest
+
 from datetime import datetime, timezone
 from mock import MagicMock, patch
 
