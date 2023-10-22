@@ -55,3 +55,9 @@ $ curl -s -XPUT -H 'Content-type: application/json' --data '{"annotation": "Test
 ```bash
 $ curl -s -XDELETE -H 'Content-type: application/json' http://127.0.0.1:5000/api/v1/incident/1/annotation
 ```
+
+# Update Actionable
+
+```bash
+$ curl -s -XPOST --data '{"actionable":"true"}' -H 'Content-type: application/json' http://127.0.0.1:5000/api/v1/incident/Q350EX0F5L5CTU_PN4N552/actionable
+```
