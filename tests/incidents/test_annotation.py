@@ -37,7 +37,7 @@ def test_annotation_incident(app, db):
 
     client = app.test_client()
 
-    resp = client.post('/api/v1/incident/1/annotation', json={'annotation': 'test'})
+    resp = client.post('/api/v1/incident/123/annotation', json={'annotation': 'test'})
 
     assert resp.status_code == HTTPStatus.OK
     assert resp.json['annotation']['summary'] == 'test'
@@ -65,7 +65,7 @@ def test_annotation_incident_no_json(app, db):
 
     client = app.test_client()
 
-    resp = client.post('/api/v1/incident/1/annotation')
+    resp = client.post('/api/v1/incident/123/annotation')
 
     assert resp.status_code == HTTPStatus.BAD_REQUEST
     assert resp.json == {'error': 'requests must of type application/json'}
@@ -79,12 +79,12 @@ def test_update_annotation(app, db):
 
     client = app.test_client()
 
-    resp = client.post('/api/v1/incident/1/annotation', json={'annotation': 'test'})
+    resp = client.post('/api/v1/incident/123/annotation', json={'annotation': 'test'})
 
     assert resp.status_code == HTTPStatus.OK
     assert resp.json['annotation']['summary'] == 'test'
 
-    resp = client.put('/api/v1/incident/1/annotation', json={'annotation': 'test 2'})
+    resp = client.put('/api/v1/incident/123/annotation', json={'annotation': 'test 2'})
 
     assert resp.status_code == HTTPStatus.OK
     assert resp.json['annotation']['summary'] == 'test 2'
@@ -98,12 +98,12 @@ def test_deleting_annotation(app, db):
 
     client = app.test_client()
 
-    resp = client.post('/api/v1/incident/1/annotation', json={'annotation': 'test'})
+    resp = client.post('/api/v1/incident/123/annotation', json={'annotation': 'test'})
 
     assert resp.status_code == HTTPStatus.OK
     assert resp.json['annotation']['summary'] == 'test'
 
-    resp = client.delete('/api/v1/incident/1/annotation')
+    resp = client.delete('/api/v1/incident/123/annotation')
 
     assert resp.status_code == HTTPStatus.OK
     assert resp.json == {"annotation": None}

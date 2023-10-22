@@ -69,7 +69,7 @@ def get_incidents(team_id):
 
 
 @api.route('/incident/<string:incident_id>/annotation', methods=['POST', 'PUT', 'DELETE'])
-def annotation(incident_id):
+def annotation(incident_id: str):
     """
     Annotation for an incident
     """
@@ -77,7 +77,7 @@ def annotation(incident_id):
         return jsonify({"error": "requests must of type application/json"}), HTTPStatus.BAD_REQUEST
 
     # Check the team exists
-    incident = Incidents.query.filter_by(id=incident_id).one_or_none()
+    incident = Incidents.query.filter_by(incident_id=incident_id).one_or_none()
 
     if incident is None:
         return jsonify({"error": "incident does not exist"}), HTTPStatus.BAD_REQUEST
@@ -105,3 +105,32 @@ def annotation(incident_id):
         db.session.commit()
 
     return jsonify({'annotation': annotation.to_dict()}), HTTPStatus.OK
+
+
+@api.route('/incident/<string:incident_id>/actionable', methods=['POST'])
+def actionable_incident(incident_id: str):
+    """
+    Mark an incident as actionable or not
+    """
+    # Check the team exists
+    incident = Incidents.query.filter_by(incident_id=incident_id).one_or_none()
+
+    if incident is None:
+        return jsonify({"error": "incident does not exist"}), HTTPStatus.BAD_REQUEST
+
+    if not request.is_json:
+        return jsonify({"error": "requests must of type application/json"}), HTTPStatus.BAD_REQUEST
+
+    data = request.get_json()
+    actionable = data.get('actionable')
+
+    if actionable is None:
+        return jsonify({"error": "actionable is a required argument"}), HTTPStatus.BAD_REQUEST
+
+    if actionable.lower() not in ['true', 'false']:
+        return jsonify({"error": "actionable must be either true or false"}), HTTPStatus.BAD_REQUEST
+
+    db.session.query(Incidents).filter_by(incident_id=incident_id).update({'actionable': actionable.lower() == 'true'})
+    db.session.commit()
+
+    return jsonify({'actionable': actionable.lower() == 'true'}), HTTPStatus.OK
