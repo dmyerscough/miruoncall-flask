@@ -54,7 +54,7 @@ def get_incidents(team_id):
     if datetime.fromisoformat(since) > datetime.fromisoformat(until):
         return jsonify({'error': 'since cannot be greater than until'}), HTTPStatus.BAD_REQUEST
 
-    incidents = {'incidents': [], 'summary': {}}
+    incidents = {'incidents': [], 'summary': {}, 'team': team.to_dict()}
 
     incidents['summary'] = {
         (datetime.fromisoformat(since) + timedelta(days=x)).strftime('%Y-%m-%d'): {'low': 0, 'high': 0} for x in range((datetime.fromisoformat(until) - datetime.fromisoformat(since)).days + 1)

@@ -52,6 +52,17 @@ class Teams(db.Model):
         self.summary = summary
         self.last_checked = last_checked
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'alias': self.alias,
+            'team_id': self.team_id,
+            'summary': self.summary,
+            'created_at': self.created_at.isoformat(),
+            'last_checked': self.last_checked.isoformat() if self.last_checked else None,
+        }
+
     def __repr__(self):
         return f'<Team ID: {self.team_id} - {self.name}>'
 

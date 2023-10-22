@@ -12,7 +12,7 @@ def test_query_incidents(app, db):
     """
     client = app.test_client()
 
-    team = Teams(name='test-team', team_id='ABC123', summary='', last_checked=datetime.now())
+    team = Teams(name='test-team', team_id='ABC123', summary='awesome team', last_checked=datetime.now())
 
     db.session.add(team)
     db.session.commit()
@@ -30,6 +30,16 @@ def test_query_incidents(app, db):
             '2023-01-05': {'high': 0, 'low': 0},
             '2023-01-06': {'high': 0, 'low': 0},
             '2023-01-07': {'high': 0, 'low': 0}
+        },
+        # 2023-10-22 08:06:01
+        'team': {
+            'alias': None,
+            'created_at': team.created_at.isoformat(),
+            'id': team.id,
+            'last_checked': team.last_checked.isoformat(),
+            'name': team.name,
+            'summary': team.summary,
+            'team_id': team.team_id
         }
     }
 
