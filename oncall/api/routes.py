@@ -89,7 +89,7 @@ def annotation(incident_id: str):
     if incident and incident.annotation_id is not None:
         annotation = Annotations.query.filter_by(id=incident.annotation_id).one_or_none()
 
-        if request.method == 'PUT':
+        if request.method in ['PUT', 'POST']:
             db.session.query(Annotations).filter_by(id=incident.annotation_id).update({'summary': description})
             db.session.commit()
         elif request.method == 'DELETE':
