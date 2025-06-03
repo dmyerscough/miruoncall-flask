@@ -46,21 +46,25 @@ def get_incidents(team_id):
         return jsonify({"error": "since and until are required arguments"}), HTTPStatus.BAD_REQUEST
 
     try:
-        since = datetime.fromisoformat(since).strftime('%Y-%m-%d')
-        until = datetime.fromisoformat(until).strftime('%Y-%m-%d')
+        since_date = datetime.fromisoformat(since)
+        until_date = datetime.fromisoformat(until)
+
+        # For filtering, use start of day for since and end of day for until
+        since_filter = since_date.strftime('%Y-%m-%d')
+        until_filter = (until_date + timedelta(days=1)).strftime('%Y-%m-%d')
     except ValueError:
         return jsonify({'error': 'since and until require the format of YYYY-MM-DD'}), HTTPStatus.BAD_REQUEST
 
-    if datetime.fromisoformat(since) > datetime.fromisoformat(until):
+    if since_date > until_date:
         return jsonify({'error': 'since cannot be greater than until'}), HTTPStatus.BAD_REQUEST
 
     incidents = {'incidents': [], 'summary': {}, 'team': team.to_dict()}
 
     incidents['summary'] = {
-        (datetime.fromisoformat(since) + timedelta(days=x)).strftime('%Y-%m-%d'): {'low': 0, 'high': 0} for x in range((datetime.fromisoformat(until) - datetime.fromisoformat(since)).days + 1)
+        (since_date + timedelta(days=x)).strftime('%Y-%m-%d'): {'low': 0, 'high': 0} for x in range((until_date - since_date).days + 1)
     }
 
-    for incident in Incidents.query.filter_by(team=team_id).filter(Incidents.created_at.between(since, until)).order_by('created_at'):
+    for incident in Incidents.query.filter_by(team=team_id).filter(Incidents.created_at.between(since_filter, until_filter)).order_by('created_at'):
         incidents['summary'][incident.created_at.strftime('%Y-%m-%d')][incident.urgency.lower()] += 1
 
         incidents['incidents'].append(incident.to_dict())
