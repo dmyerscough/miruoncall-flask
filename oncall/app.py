@@ -1,4 +1,3 @@
-
 from oncall import celery as ext_celery
 from oncall import create_app
 from oncall.api.routes import api

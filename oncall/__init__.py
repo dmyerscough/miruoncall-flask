@@ -1,4 +1,3 @@
-
 import os
 
 from flask import Flask
@@ -23,7 +22,7 @@ def create_app(config_name=None):
         config_name = os.getenv('FLASK_CONFIG', 'development')
 
     app = Flask(__name__)
-    CORS(app, resources={r"/api/*": {"origins": config[config_name].CORS_ORIGINS}})
+    CORS(app, resources={r'/api/*': {'origins': config[config_name].CORS_ORIGINS}})
 
     app.config.from_object(config[config_name])
 

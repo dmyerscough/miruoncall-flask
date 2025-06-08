@@ -21,11 +21,9 @@ class RateLimit(Exception):
 
 
 class PagerDuty:
-
-    PAGERDUTY_ENDPOINT = "https://api.pagerduty.com"
+    PAGERDUTY_ENDPOINT = 'https://api.pagerduty.com'
 
     def __init__(self, api):
-
         self.api = api
 
     @retry(exceptions=RateLimit, tries=3, delay=30, backoff=2)
@@ -51,7 +49,7 @@ class PagerDuty:
             method=method,
             url=urljoin(self.PAGERDUTY_ENDPOINT, endpoint),
             params=payload,
-            headers=headers
+            headers=headers,
         )
 
         prep = session.prepare_request(request)
@@ -59,9 +57,7 @@ class PagerDuty:
 
         if resp.status_code != HTTPStatus.OK:
             if resp.status_code == HTTPStatus.TOO_MANY_REQUESTS:
-                raise RateLimit(
-                    f'{urljoin(self.PAGERDUTY_ENDPOINT, endpoint)} is being rate limited'
-                )
+                raise RateLimit(f'{urljoin(self.PAGERDUTY_ENDPOINT, endpoint)} is being rate limited')
 
             raise RequestFailure(
                 f'{urljoin(self.PAGERDUTY_ENDPOINT, endpoint)} returned a status code: {resp.status_code} ({resp.json().get("error", {}).get("message")})'
@@ -80,12 +76,12 @@ class PagerDuty:
         :return: None
         """
         if since > until:
-            raise InvalidTimeRange("Since time cannot be newer than until time")
+            raise InvalidTimeRange('Since time cannot be newer than until time')
 
         current_time = datetime.datetime.now(datetime.timezone.utc)
 
         if since > current_time or until > current_time:
-            raise InvalidTimeRange("Since and/or until cannot be set to a future time")
+            raise InvalidTimeRange('Since and/or until cannot be set to a future time')
 
     def get_incidents(self, team_id: str, since: datetime, until: datetime, offset=25):
         """
@@ -169,10 +165,7 @@ class PagerDuty:
 
         :return: (dict) A teams specific schedules
         """
-        payload = {
-            'offset': 0,
-            'team_ids[]': team_id
-        }
+        payload = {'offset': 0, 'team_ids[]': team_id}
 
         while True:
             schedule = self._query(method='GET', endpoint='schedules', payload=payload)
@@ -204,5 +197,5 @@ class PagerDuty:
                 'time_zone': 'UTC',
                 'since': since.isoformat(),
                 'until': until.isoformat(),
-            }
+            },
         )

@@ -21,12 +21,16 @@ def populate_incidents(self):
 
     for team in Teams.query.all():
         # TODO(damian): Update the last checked time
-        _populate_incident.delay(team_id=team.id, since=team.last_checked.replace(tzinfo=timezone.utc), until=until)
+        _populate_incident.delay(
+            team_id=team.id,
+            since=team.last_checked.replace(tzinfo=timezone.utc),
+            until=until,
+        )
 
     return True
 
 
-@celery.task(bind=True, autoretry_for=(Exception,), exponential_backoff=2, retry_kwargs={'max_retries': 3}, retry_jitter=False)
+@celery.task(bind=True)
 def _populate_incident(self, team_id: str, since: datetime, until: datetime):
     """
     Populate team alerts
@@ -48,7 +52,7 @@ def _populate_incident(self, team_id: str, since: datetime, until: datetime):
         for incidents in pyduty.get_incidents(team_id=team.team_id, since=since, until=until):
             for incident in incidents:
                 # Create a unique identifier since incident ID can be duplicated across teams
-                incident_id = f"{incident['id']}_{team.team_id}"
+                incident_id = f'{incident["id"]}_{team.team_id}'
 
                 if Incidents.query.filter_by(incident_id=incident_id).one_or_none() is None:
                     new_incident = Incidents(
@@ -67,7 +71,7 @@ def _populate_incident(self, team_id: str, since: datetime, until: datetime):
                     db.session.add(new_incident)
                     db.session.commit()
 
-                    logger.info(f"{incident_id} has been created")
+                    logger.info(f'{incident_id} has been created')
     except RequestFailure as err:
         logger.error(f'Failed to query PagerDuty: {err}')
 
@@ -80,7 +84,7 @@ def _populate_incident(self, team_id: str, since: datetime, until: datetime):
     return True
 
 
-@celery.task(bind=True, autoretry_for=(Exception,), exponential_backoff=2, retry_kwargs={'max_retries': 3}, retry_jitter=False)
+@celery.task(bind=True)
 def populate_teams(self):
     """
     Populate team details
@@ -100,7 +104,9 @@ def populate_teams(self):
 
                     if app.config.get('INITIAL_INCIDENT_LOOKBACK') is not None:
                         # When the team bootstrap occurs query the past X days for incidents
-                        new_team.last_checked = new_team.last_checked - timedelta(days=int(app.config['INITIAL_INCIDENT_LOOKBACK']))
+                        new_team.last_checked = new_team.last_checked - timedelta(
+                            days=int(app.config['INITIAL_INCIDENT_LOOKBACK'])
+                        )
 
                     db.session.add(new_team)
                     db.session.commit()
@@ -125,7 +131,7 @@ def update_incidents(self):
     return True
 
 
-@celery.task(bind=True, autoretry_for=(Exception,), exponential_backoff=2, retry_kwargs={'max_retries': 3}, retry_jitter=False)
+@celery.task(bind=True)
 def _update_incident(self, incident_id):
     """
     Check the status of a ticket and update the status

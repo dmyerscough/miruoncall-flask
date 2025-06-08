@@ -1,4 +1,3 @@
-
 from oncall.api.models import Teams
 
 from http import HTTPStatus
@@ -13,7 +12,9 @@ def test_querying_teams(app, db):
     client = app.test_client()
 
     db.session.add(
-        Teams(name='test-team', team_id='ABC123', summary='', last_checked=datetime.now())
+        Teams(
+            name='test-team', team_id='ABC123', summary='', last_checked=datetime.now()
+        )
     )
     db.session.commit()
 

@@ -15,22 +15,22 @@ def test_get_incidents(mock_query_resp):
     Test getting a single pagination of incidents
     """
     mock_query_resp.return_value = {
-        "incidents": [
+        'incidents': [
             {
-                "id": "PT4KHLK",
-                "type": "incident",
-                "summary": "[#1234] The server is on fire.",
-                "incident_number": 1234,
-                "status": "resolved",
-                "title": "The server is on fire.",
-                "incident_key": "baf7cf21b1da41b4b0221008339ff357",
-                "urgency": "high"
+                'id': 'PT4KHLK',
+                'type': 'incident',
+                'summary': '[#1234] The server is on fire.',
+                'incident_number': 1234,
+                'status': 'resolved',
+                'title': 'The server is on fire.',
+                'incident_key': 'baf7cf21b1da41b4b0221008339ff357',
+                'urgency': 'high',
             }
         ],
-        "limit": 25,
-        "offset": 0,
-        "total": None,
-        "more": False
+        'limit': 25,
+        'offset': 0,
+        'total': None,
+        'more': False,
     }
 
     pyduty = PagerDuty('abc123')
@@ -38,7 +38,7 @@ def test_get_incidents(mock_query_resp):
     incidents = pyduty.get_incidents(
         'ABCXYZ',
         since=dateutil.parser.parse('2019-01-01T06:42:09.668417+00:00'),
-        until=dateutil.parser.parse('2019-01-01T06:52:09.668417+00:00')
+        until=dateutil.parser.parse('2019-01-01T06:52:09.668417+00:00'),
     )
 
     assert isinstance(incidents, types.GeneratorType)
@@ -46,15 +46,17 @@ def test_get_incidents(mock_query_resp):
     next(incidents)
 
     mock_query_resp.assert_called_once_with(
-        endpoint='incidents', method='GET',
+        endpoint='incidents',
+        method='GET',
         payload={
             'team_ids[]': 'ABCXYZ',
             'time_zone': 'UTC',
             'since': '2019-01-01T06:42:09.668417+00:00',
             'until': '2019-01-01T06:52:09.668417+00:00',
-            'offset': 0
-        }
+            'offset': 0,
+        },
     )
+
 
 @patch('oncall.utils.pagerduty.PagerDuty._query')
 def test_get_incidents_pagination(mock_query_resp):
@@ -63,41 +65,41 @@ def test_get_incidents_pagination(mock_query_resp):
     """
     mock_query_resp.side_effect = [
         {
-            "incidents": [
+            'incidents': [
                 {
-                    "id": "PT4KHLK",
-                    "type": "incident",
-                    "summary": "[#1234] The server is on fire.",
-                    "incident_number": 1234,
-                    "status": "resolved",
-                    "title": "The server is on fire.",
-                    "incident_key": "baf7cf21b1da41b4b0221008339ff357",
-                    "urgency": "high"
+                    'id': 'PT4KHLK',
+                    'type': 'incident',
+                    'summary': '[#1234] The server is on fire.',
+                    'incident_number': 1234,
+                    'status': 'resolved',
+                    'title': 'The server is on fire.',
+                    'incident_key': 'baf7cf21b1da41b4b0221008339ff357',
+                    'urgency': 'high',
                 }
             ],
-            "limit": 25,
-            "offset": 0,
-            "total": None,
-            "more": True
+            'limit': 25,
+            'offset': 0,
+            'total': None,
+            'more': True,
         },
         {
-            "incidents": [
+            'incidents': [
                 {
-                    "id": "PT4KHLK",
-                    "type": "incident",
-                    "summary": "[#1234] The server is on fire.",
-                    "incident_number": 1234,
-                    "status": "resolved",
-                    "title": "The server is on fire.",
-                    "incident_key": "baf7cf21b1da41b4b0221008339ff357",
-                    "urgency": "high"
+                    'id': 'PT4KHLK',
+                    'type': 'incident',
+                    'summary': '[#1234] The server is on fire.',
+                    'incident_number': 1234,
+                    'status': 'resolved',
+                    'title': 'The server is on fire.',
+                    'incident_key': 'baf7cf21b1da41b4b0221008339ff357',
+                    'urgency': 'high',
                 }
             ],
-            "limit": 25,
-            "offset": 0,
-            "total": None,
-            "more": False
-        }
+            'limit': 25,
+            'offset': 0,
+            'total': None,
+            'more': False,
+        },
     ]
 
     pyduty = PagerDuty('abc123')
@@ -105,7 +107,7 @@ def test_get_incidents_pagination(mock_query_resp):
     incidents = pyduty.get_incidents(
         'ABCXYZ',
         since=dateutil.parser.parse('2019-01-01T06:42:09.668417+00:00'),
-        until=dateutil.parser.parse('2019-01-01T06:52:09.668417+00:00')
+        until=dateutil.parser.parse('2019-01-01T06:52:09.668417+00:00'),
     )
 
     assert isinstance(incidents, types.GeneratorType)
@@ -117,29 +119,29 @@ def test_get_incidents_pagination(mock_query_resp):
     with pytest.raises(StopIteration):
         next(incidents)
 
+
 @patch('oncall.utils.pagerduty.PagerDuty._query')
 def test_get_incident(mock_query_resp):
     """
     Test getting a single incident
     """
     mock_query_resp.return_value = {
-        "incident": {
-            "id": "PT4KHLK",
-            "type": "incident",
-            "summary": "[#1234] The server is on fire.",
-            "incident_number": 1234,
-            "status": "resolved",
-            "title": "The server is on fire.",
+        'incident': {
+            'id': 'PT4KHLK',
+            'type': 'incident',
+            'summary': '[#1234] The server is on fire.',
+            'incident_number': 1234,
+            'status': 'resolved',
+            'title': 'The server is on fire.',
         },
-        "urgency": "high"
+        'urgency': 'high',
     }
 
     pyduty = PagerDuty('abc123')
     pyduty.get_incident('ABCXYZ')
 
-    mock_query_resp.assert_called_once_with(
-        endpoint='incidents/ABCXYZ', method='GET'
-    )
+    mock_query_resp.assert_called_once_with(endpoint='incidents/ABCXYZ', method='GET')
+
 
 @patch('oncall.utils.pagerduty.PagerDuty._query')
 def test_get_teams(mock_query_resp):
@@ -147,21 +149,21 @@ def test_get_teams(mock_query_resp):
     Test getting a single pagination of teams
     """
     mock_query_resp.return_value = {
-        "teams": [
+        'teams': [
             {
-                "id": "PQ9K7I8",
-                "type": "team",
-                "summary": "Engineering",
-                "self": "https://api.pagerduty.com/teams/PQ9K7I8",
-                "html_url": "https://subdomain.pagerduty.com/teams/PQ9K7I8",
-                "name": "Engineering",
-                "description": "All engineering"
+                'id': 'PQ9K7I8',
+                'type': 'team',
+                'summary': 'Engineering',
+                'self': 'https://api.pagerduty.com/teams/PQ9K7I8',
+                'html_url': 'https://subdomain.pagerduty.com/teams/PQ9K7I8',
+                'name': 'Engineering',
+                'description': 'All engineering',
             }
         ],
-        "limit": 25,
-        "offset": 0,
-        "total": None,
-        "more": False
+        'limit': 25,
+        'offset': 0,
+        'total': None,
+        'more': False,
     }
 
     pyduty = PagerDuty('abc123')
@@ -174,6 +176,7 @@ def test_get_teams(mock_query_resp):
         endpoint='teams', method='GET', payload={'offset': 0}
     )
 
+
 @patch('oncall.utils.pagerduty.PagerDuty._query')
 def test_get_teams_pagination(mock_query_resp):
     """
@@ -181,38 +184,38 @@ def test_get_teams_pagination(mock_query_resp):
     """
     mock_query_resp.side_effect = [
         {
-            "teams": [
+            'teams': [
                 {
-                    "id": "PQ9K7I8",
-                    "type": "team",
-                    "summary": "Engineering",
-                    "self": "https://api.pagerduty.com/teams/PQ9K7I8",
-                    "html_url": "https://subdomain.pagerduty.com/teams/PQ9K7I8",
-                    "name": "Engineering",
-                    "description": "All engineering"
+                    'id': 'PQ9K7I8',
+                    'type': 'team',
+                    'summary': 'Engineering',
+                    'self': 'https://api.pagerduty.com/teams/PQ9K7I8',
+                    'html_url': 'https://subdomain.pagerduty.com/teams/PQ9K7I8',
+                    'name': 'Engineering',
+                    'description': 'All engineering',
                 }
             ],
-            "limit": 25,
-            "offset": 0,
-            "total": None,
-            "more": True
+            'limit': 25,
+            'offset': 0,
+            'total': None,
+            'more': True,
         },
         {
-            "teams": [
+            'teams': [
                 {
-                    "id": "PQ9K7I8",
-                    "type": "team",
-                    "summary": "Engineering",
-                    "self": "https://api.pagerduty.com/teams/PQ9K7I8",
-                    "html_url": "https://subdomain.pagerduty.com/teams/PQ9K7I8",
-                    "name": "Engineering",
-                    "description": "All engineering"
+                    'id': 'PQ9K7I8',
+                    'type': 'team',
+                    'summary': 'Engineering',
+                    'self': 'https://api.pagerduty.com/teams/PQ9K7I8',
+                    'html_url': 'https://subdomain.pagerduty.com/teams/PQ9K7I8',
+                    'name': 'Engineering',
+                    'description': 'All engineering',
                 }
             ],
-            "limit": 25,
-            "offset": 0,
-            "total": None,
-            "more": False
+            'limit': 25,
+            'offset': 0,
+            'total': None,
+            'more': False,
         },
     ]
 
@@ -228,28 +231,29 @@ def test_get_teams_pagination(mock_query_resp):
     with pytest.raises(StopIteration):
         next(team)
 
+
 @patch('oncall.utils.pagerduty.PagerDuty._query')
 def test_get_schedules(mock_query_resp):
     """
     Test getting a specific teams list of schedules
     """
     mock_query_resp.return_value = {
-        "schedules": [
+        'schedules': [
             {
-                "id": "PI7DH85",
-                "type": "schedule",
-                "summary": "Daily Engineering Rotation",
-                "self": "https://api.pagerduty.com/schedules/PI7DH85",
-                "html_url": "https://subdomain.pagerduty.com/schedules/PI7DH85",
-                "name": "Daily Engineering Rotation",
-                "time_zone": "America/New_York",
-                "description": "Rotation schedule for engineering",
+                'id': 'PI7DH85',
+                'type': 'schedule',
+                'summary': 'Daily Engineering Rotation',
+                'self': 'https://api.pagerduty.com/schedules/PI7DH85',
+                'html_url': 'https://subdomain.pagerduty.com/schedules/PI7DH85',
+                'name': 'Daily Engineering Rotation',
+                'time_zone': 'America/New_York',
+                'description': 'Rotation schedule for engineering',
             }
         ],
-        "limit": 100,
-        "offset": 0,
-        "total": None,
-        "more": False
+        'limit': 100,
+        'offset': 0,
+        'total': None,
+        'more': False,
     }
 
     pyduty = PagerDuty('abc123')
@@ -264,8 +268,11 @@ def test_get_schedules(mock_query_resp):
         next(schedules)
 
     mock_query_resp.assert_called_once_with(
-        endpoint='schedules', method='GET', payload={'offset': 25, 'team_ids[]': 'TEAMID'}
+        endpoint='schedules',
+        method='GET',
+        payload={'offset': 25, 'team_ids[]': 'TEAMID'},
     )
+
 
 @patch('oncall.utils.pagerduty.PagerDuty._query')
 def test_get_schedule(mock_query_resp):
@@ -279,7 +286,7 @@ def test_get_schedule(mock_query_resp):
     pyduty.get_schedule(
         'ABC123',
         dateutil.parser.parse('2019-01-01T06:42:09.668417+00:00'),
-        dateutil.parser.parse('2019-01-01T06:52:09.668417+00:00')
+        dateutil.parser.parse('2019-01-01T06:52:09.668417+00:00'),
     )
 
     mock_query_resp.assert_called_once_with(
@@ -289,9 +296,10 @@ def test_get_schedule(mock_query_resp):
             'id': 'ABC123',
             'time_zone': 'UTC',
             'since': '2019-01-01T06:42:09.668417+00:00',
-            'until': '2019-01-01T06:52:09.668417+00:00'
-        }
+            'until': '2019-01-01T06:52:09.668417+00:00',
+        },
     )
+
 
 @patch('oncall.utils.pagerduty.Request')
 @patch('oncall.utils.pagerduty.Session')
@@ -316,14 +324,13 @@ def test_query(mock_session, mock_request):
     mock_request.assert_called_once_with(
         headers={
             'Accept': 'application/vnd.pagerduty+json;version=2',
-            'Authorization': 'Token token=abc123'
+            'Authorization': 'Token token=abc123',
         },
         method='GET',
-        params={
-            'offset': 0
-        },
-        url='https://api.pagerduty.com/teams'
+        params={'offset': 0},
+        url='https://api.pagerduty.com/teams',
     )
+
 
 @patch('oncall.utils.pagerduty.Request')
 @patch('oncall.utils.pagerduty.Session')
@@ -332,9 +339,9 @@ def test_query_failure(mock_session, mock_request):
     Test failing to query PagerDuty
     """
     mock_request.json.return_value = {
-        "error": {
-            "message": "Your account is expired and cannot use the API.",
-            "code": 2012
+        'error': {
+            'message': 'Your account is expired and cannot use the API.',
+            'code': 2012,
         }
     }
 
@@ -354,11 +361,9 @@ def test_query_failure(mock_session, mock_request):
     mock_request.assert_called_once_with(
         headers={
             'Accept': 'application/vnd.pagerduty+json;version=2',
-            'Authorization': 'Token token=abc123'
+            'Authorization': 'Token token=abc123',
         },
         method='GET',
-        params={
-            'offset': 0
-        },
-        url='https://api.pagerduty.com/teams'
+        params={'offset': 0},
+        url='https://api.pagerduty.com/teams',
     )

@@ -1,11 +1,9 @@
-
 from oncall import db
 
 # import uuid
 
 
 class Annotations(db.Model):
-
     __tablename__ = 'annotations'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -31,7 +29,6 @@ class Annotations(db.Model):
 
 
 class Teams(db.Model):
-
     __tablename__ = 'teams'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -68,7 +65,6 @@ class Teams(db.Model):
 
 
 class Incidents(db.Model):
-
     __tablename__ = 'incidents'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -93,7 +89,19 @@ class Incidents(db.Model):
     annotation_id = db.Column(db.Integer, db.ForeignKey('annotations.id'))
     annotation = db.relationship('Annotations', back_populates='incidents')
 
-    def __init__(self, title, description, summary, status, actionable, created_at, incident_id, annotation, urgency, team):
+    def __init__(
+        self,
+        title,
+        description,
+        summary,
+        status,
+        actionable,
+        created_at,
+        incident_id,
+        annotation,
+        urgency,
+        team,
+    ):
         self.title = title
         self.description = description
         self.summary = summary

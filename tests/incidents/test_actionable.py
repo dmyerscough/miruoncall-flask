@@ -1,4 +1,3 @@
-
 from oncall.api.models import Teams, Incidents
 
 from http import HTTPStatus
@@ -9,7 +8,9 @@ def create_team_and_incident(db):
     """
     Create a team and incident for testing
     """
-    team = Teams(name='test-team', team_id='ABC123', summary='', last_checked=datetime.now())
+    team = Teams(
+        name='test-team', team_id='ABC123', summary='', last_checked=datetime.now()
+    )
 
     incident = Incidents(
         incident_id='123',
@@ -21,7 +22,7 @@ def create_team_and_incident(db):
         status='resolved',
         created_at=datetime.now(),
         urgency='high',
-        annotation=None
+        annotation=None,
     )
 
     db.session.add(team)
@@ -38,7 +39,7 @@ def test_actionable_incident(app, db):
     incident = Incidents.query.filter_by(incident_id='123').one_or_none()
 
     client = app.test_client()
-    resp = client.post('/api/v1/incident/123/actionable', json={'actionable': 'true'})
+    client.post('/api/v1/incident/123/actionable', json={'actionable': 'true'})
 
     assert incident.actionable is True
 

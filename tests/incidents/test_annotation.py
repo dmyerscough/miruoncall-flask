@@ -1,4 +1,3 @@
-
 from oncall.api.models import Teams, Incidents
 
 from http import HTTPStatus
@@ -9,7 +8,9 @@ def create_team_and_incident(db):
     """
     Create a team and incident for testing
     """
-    team = Teams(name='test-team', team_id='ABC123', summary='', last_checked=datetime.now())
+    team = Teams(
+        name='test-team', team_id='ABC123', summary='', last_checked=datetime.now()
+    )
 
     incident = Incidents(
         incident_id='123',
@@ -21,7 +22,7 @@ def create_team_and_incident(db):
         status='resolved',
         created_at=datetime.now(),
         urgency='high',
-        annotation=None
+        annotation=None,
     )
 
     db.session.add(team)
@@ -106,9 +107,8 @@ def test_deleting_annotation(app, db):
     resp = client.delete('/api/v1/incident/123/annotation')
 
     assert resp.status_code == HTTPStatus.OK
-    assert resp.json == {"annotation": None}
+    assert resp.json == {'annotation': None}
 
     incident = Incidents.query.filter_by(id=1).one_or_none()
 
     assert incident.annotation_id is None
-

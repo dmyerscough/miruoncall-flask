@@ -1,4 +1,3 @@
-
 import os
 from pathlib import Path
 
@@ -9,6 +8,7 @@ class BaseConfig:
     """
     Base configuration
     """
+
     BASE_DIR = Path(__file__).resolve().parent.parent
 
     TESTING = False
@@ -20,7 +20,7 @@ class BaseConfig:
 
     # Celery configuration
     BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://127.0.0.1:6379/0')
-    CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", "redis://127.0.0.1:6379/0")
+    CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'redis://127.0.0.1:6379/0')
 
     CELERY_ACCEPT_CONTENT = ['application/json']
     CELERY_TASK_SERIALIZER = 'json'
@@ -32,17 +32,17 @@ class BaseConfig:
         'populate_teams': {
             'task': 'oncall.api.tasks.populate_teams',
             # Every 30 minutes
-            'schedule': crontab(minute="*/30"),
+            'schedule': crontab(minute='*/30'),
         },
         'populate_incidents': {
             'task': 'oncall.api.tasks.populate_incidents',
-            # Every minute
-            'schedule': crontab(minute="*"),
+            # Every 5 minutes
+            'schedule': crontab(minute='*/5'),
         },
         'update_incidents': {
             'task': 'oncall.api.tasks.update_incidents',
             # Every 5 minutes
-            'schedule': crontab(minute="*/5"),
+            'schedule': crontab(minute='*/10'),
         },
     }
 
@@ -58,15 +58,17 @@ class DevelopmentConfig(BaseConfig):
     """
     Development configuration
     """
+
     DEBUG = True
 
-    CORS_ORIGINS = ["*"]
+    CORS_ORIGINS = ['*']
 
 
 class ProductionConfig(BaseConfig):
     """
     Production configuration
     """
+
     DEBUG = False
 
     CORS_ORIGINS = []
